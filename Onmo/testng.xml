@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Functional Suite">
+	
+	<parameter name="baseURL" value="http://malayalamvideos.signitydemo.in" />	
+	<listeners>
+		<listener class-name="in.signity.onmobile.utilities.TestListener" />
+		<listener class-name="in.signity.onmobile.utilities.ExtentReporterNG" />
+	</listeners>		
+
+	<test name="Mozile Firefox">
+		<parameter name="browserVer" value="firefox" />
+		<classes>
+			<class name="in.signity.onmobile.POM.Tests.HomeTests" />
+		
+		</classes>
+	</test>
+</suite> 

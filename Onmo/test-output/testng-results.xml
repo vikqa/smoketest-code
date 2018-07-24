@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="0" passed="0">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Functional Suite" duration-ms="41" started-at="2018-06-19T12:15:18Z" finished-at="2018-06-19T12:15:18Z">
+    <groups>
+    </groups>
+    <test name="Mozile Firefox" duration-ms="41" started-at="2018-06-19T12:15:18Z" finished-at="2018-06-19T12:15:18Z">
+    </test> <!-- Mozile Firefox -->
+  </suite> <!-- Functional Suite -->
+</testng-results>

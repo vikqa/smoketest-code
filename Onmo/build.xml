@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="automation" default="XSLT" basedir=".">
+	<tstamp>
+		<format property="time.stamp" pattern="yyyyMMdd_HHmmss"/>
+	</tstamp>
+
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="build.dir" value="${basedir}/build" />
+	<property name="testng_output_backup.dir" value="${basedir}/testng_output_backup_${time.stamp}" />
+	<property name="testng-xslt_backup.dir" value="${basedir}/testng_xslt_backup_${time.stamp}" />
+
+	<property name="testng_output.dir" value="${basedir}/testng_output" />
+	<property name="testng_xslt.dir" value="${basedir}/testng_xslt" />
+
+	<property name="lib.dir" value="${basedir}/lib" />
+
+	<property name="screnie.dir" value="${basedir}/screenshots/success/internetexplorer" />
+	<property name="screnff.dir" value="${basedir}/screenshots/success/firefox" />
+	<property name="screnchrome.dir" value="${basedir}/screenshots/success/chrome" />
+
+	<property name="screnfie.dir" value="${basedir}/screenshots/failures/internetexplorer" />
+	<property name="screnfff.dir" value="${basedir}/screenshots/failures/firefox" />
+	<property name="screnfchrome.dir" value="${basedir}/screenshots/failures/chrome" />
+
+	<property name="videoie.dir" value="${basedir}/videos/internetexplorer" />
+	<property name="videiff.dir" value="${basedir}/videos/firefox" />
+	<property name="videichrome.dir" value="${basedir}/videos/chrome" />
+
+	<property name="video.dir" value="${basedir}/videos" />
+
+
+	<!-- get class path, used for build -->
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="*.jar" />
+		<pathelement location="build" />
+	</path>
+
+
+	<target name="clean">
+		<delete includeemptydirs="true">
+			<fileset dir="${build.dir}">
+				<include name="**/*" />
+				<exclude name="log4j.properties" />
+			</fileset>
+
+
+			<fileset dir="${screnie.dir}">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="${screnff.dir}">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="${screnchrome.dir}">
+				<include name="**/*" />
+			</fileset>
+
+
+			<fileset dir="${screnfie.dir}">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="${screnfff.dir}">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="${screnfchrome.dir}">
+				<include name="**/*" />
+			</fileset>			
+
+
+			<!--	<fileset dir="${videoie.dir}">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="${videiff.dir}">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="${videichrome.dir}">
+				<include name="**/*" />
+			</fileset>-->
+		</delete>
+
+		<mkdir dir="${testng_output_backup.dir}" />
+		<mkdir dir="${testng-xslt_backup.dir}" />
+
+		<copy todir="${testng_output_backup.dir}" >
+			<fileset dir="${testng_output.dir}" includes="**"/>
+		</copy>
+
+
+		<copy todir="${testng-xslt_backup.dir}" >
+			<fileset dir="${testng_xslt.dir}" includes="**"/>
+		</copy>
+
+		<delete dir="${testng_output.dir}"/>
+		<delete dir="${testng_xslt.dir}"/>
+		<delete dir="${video.dir}"/>
+		
+
+		<mkdir dir="${testng_output.dir}" />
+		<mkdir dir="${testng_xslt.dir}" />
+		<mkdir dir="${video.dir}" />
+
+	</target>
+
+	<!-- build all java file to class binary -->
+	<target name="compile" depends="clean">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" fork="true"
+			classpathref="classpath" includeantruntime="false">
+			<compilerarg value="-Xlint:unchecked" />
+		</javac>
+	</target>
+
+	<!-- Config for testng -->
+	<taskdef name="testng" classname="org.testng.TestNGAntTask">
+		<classpath>
+			<pathelement location="lib/testng-6.9.9.jar" />
+		</classpath>
+	</taskdef>
+
+
+	<!-- execute testng after compile, then generate report -->
+
+	<target name="Run" depends="compile">
+		<!-- config testng -->
+
+		<testng outputdir="${testng_output.dir}" classpathref="classpath"
+			useDefaultListeners="true">
+
+			<!-- execute testcase follow testng.xml -->
+			<xmlfileset dir="." includes="testng.xml" />
+
+			<!-- generate report title -->
+			<sysproperty key="org.uncommons.reportng.title" value="PEN GUI V4 Automation" />
+			<sysproperty key="org.uncommons.reportng.escape-output"
+				value="false" />
+		</testng>
+	</target>
+
+	<target name="XSLT" depends="Run">
+
+
+		<xslt in="${testng_output.dir}/testng-results.xml" style="${basedir}/testng-results.xsl"		    
+			out="${testng_xslt.dir}/index.html" processor="SaxonLiaison">
+
+			<param expression="${testng_xslt.dir}/" name="testNgXslt.outputDir" />
+
+			<param expression="true" name="testNgXslt.sortTestCaseLinks" />
+
+			<param expression="FAIL,SKIP,PASS,CONF,BY_CLASS" name="testNgXslt.testDetailsFilter" />
+
+			<param expression="true" name="testNgXslt.showRuntimeTotals" />
+
+			<classpath refid="classpath" />
+
+		</xslt>
+	</target>
+
+</project>
